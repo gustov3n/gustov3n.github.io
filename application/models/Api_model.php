@@ -424,8 +424,14 @@ class Api_model extends CI_Model
   {
     $result['success'] = true;
     $result['message'] = '';
+    $result['data'] = [];
 
     $key = 'foto_add';
+
+    if (empty($_FILES) || empty($_FILES[$key])){
+      return $result;
+    }
+
     $count = count($_FILES[$key]['name']);
 
     for ($i = 0; $i < $count; $i++) {
