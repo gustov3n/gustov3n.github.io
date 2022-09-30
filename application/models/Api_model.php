@@ -225,20 +225,22 @@ class Api_model extends CI_Model
 
         $this->db->join("{$this->tableTagarbengkel} tb", 'bengkel.noreg = tb.noreg', 'left');
         $this->db->join("{$this->tableTagar} tgr", 'tb.id_tagar = tgr.id_tagar', 'left');
-
+        
+        $this->db->group_start();
         $this->db->where("bengkel.nama_bengkel REGEXP '$regex' or tgr.tagar REGEXP '$regex' or ply.nama_ply REGEXP '$regex'");
+        $this->db->group_end();
       }
       if (!empty($fKategori)) {
-        $this->db->where('kategori_kode', $fKategori);
+        $this->db->where('bengkel.kategori_kode', $fKategori);
       }
       if (!empty($fKecamatan)) {
-        $this->db->where('kec_id', $fKecamatan);
+        $this->db->where('bengkel.kec_id', $fKecamatan);
       }
       if (!empty($fKelurahan)) {
-        $this->db->where('kel_id', $fKelurahan);
+        $this->db->where('bengkel.kel_id', $fKelurahan);
       }
       if (!empty($fUser)) {
-        $this->db->where('user_id', $fUser);
+        $this->db->where('bengkel.user_id', $fUser);
       }
     }
 
