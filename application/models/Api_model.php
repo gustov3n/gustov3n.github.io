@@ -225,7 +225,7 @@ class Api_model extends CI_Model
 
         $this->db->join("{$this->tableTagarbengkel} tb", 'bengkel.noreg = tb.noreg', 'left');
         $this->db->join("{$this->tableTagar} tgr", 'tb.id_tagar = tgr.id_tagar', 'left');
-        
+
         $this->db->group_start();
         $this->db->where("bengkel.nama_bengkel REGEXP '$regex' or tgr.tagar REGEXP '$regex' or ply.nama_ply REGEXP '$regex'");
         $this->db->group_end();
@@ -306,12 +306,22 @@ class Api_model extends CI_Model
     $this->db->where('bengkel_kode', $bengkel->noreg);
     $bengkel->foto = $this->db->get()->result();
 
+    $dayOfWeek = $this->_getDayOfWeek();
+
     $this->db->from($this->tableOperasional);
     $this->db->where('noreg', $bengkel->noreg);
-    $this->db->where('hari', $this->hari[date('w')]);
+    $this->db->where('hari', $this->hari[$dayOfWeek - 1]);
     $this->db->where('jam_start <= CURRENT_TIME()', null, false);
     $this->db->where('jam_stop >= CURRENT_TIME()', null, false);
     $bengkel->buka = $this->db->count_all_results() > 0;
+  }
+
+  function _getDayOfWeek()
+  {
+    $q = $this->db->select('DAYOFWEEK(NOW()) as dow', false)
+      ->get()
+      ->row();
+    return $q->dow;
   }
 
   function addBengkel($data)
@@ -430,7 +440,7 @@ class Api_model extends CI_Model
 
     $key = 'foto_add';
 
-    if (empty($_FILES) || empty($_FILES[$key])){
+    if (empty($_FILES) || empty($_FILES[$key])) {
       return $result;
     }
 
